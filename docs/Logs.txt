@@ -1,0 +1,9 @@
+===
+1st publish:
+Transaction Digest: HcL4Q6NhTCBkjvJwb4BS1qN4eaZ6cvGWnkmLjjkQmsFE
+Package ID: 0xe98a25ef0254f61f9d800b26d8bcde549a4aeca4dc1dbf546e604ce788e1776f
+
+===
+2nd publish:
+Transaction Digest: 6d3YEjXbejCgMPvZB9GnECAD1BuCWBFKj885CwP5UAdQ
+PackageID: 0x155ce22ec5f9c443b47a25924701385e0b9df4de7944807579ef3c02bad9dfda 

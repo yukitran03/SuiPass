@@ -1,0 +1,170 @@
+Tôi muốn làm hệ thống password manager sử dụng sui stack và build trên sui blockchain.
+
+Về các chức năng cốt lõi để xây dựng MVP như sau:
+
+
+
+
+
+người dùng có thể đăng nhập zkLogin với google account -> tự động tạo sui wallet (không cần seed phrase)
+
+
+
+và khi đăng nhập thành công, cho phép optional claim SuiNS username cho UX đẹp hơn.
+
+
+
+về vault management thì chúng ta sẽ phải tạo vault mới - lần đầu. Và sau khi tạo vault có thể add các entry password và view được danh sách passwords (encrypted list). Và cho phép search/filter entries.
+
+
+
+Password CRUD
+
+
+
+
+
+Add: Form nhập (site, username, password, notes) → encrypt → store
+
+
+
+View: Decrypt on-demand, show trong modal
+
+
+
+Copy: One-click copy với visual feedback
+
+
+
+Update: Edit existing entry
+
+
+
+Delete: Xóa entry (burn cả on-chain reference)
+
+
+
+tôi nghĩ chúng ta có thể cho phép xoá cả vault, hoặc xoá nhiều password entries cùng lúc. Và vì một user có thể tạo ra nhiều vaults.
+
+
+
+Security Features
+
+
+
+
+
+Password strength meter khi thêm mới
+
+
+
+Khi đăng nhập wallet thành công đương nhiên sẽ view được vaults
+
+
+
+Auto-lock sau X phút inactive
+
+
+
+Password generator (sử dụng Sui randomness!)
+
+
+
+Sync
+
+
+
+
+
+Tất cả data trên Walrus → tự động sync cross-device
+
+
+
+Basic user flow:
+
+1. User visits app → "Sign in with Google"
+2. zkLogin process → Sui wallet tạo tự động
+3. (Optional) Claim "hung.sui" cho dễ nhớ
+4. Set master password (local, không lưu trên chain)
+5. Tạo vault → Transaction on Sui
+6. Vault object được transfer về user address
+
+1. Click "Add Password" button
+2. fill in the form modal
+3. Client-side:
+   - Validate input
+   - Encrypt với Seal (user's key)
+   - Create encrypted blob
+4. Upload blob to Walrus → get blob_id
+5. Update Vault object on Sui với:
+   - New blob_id
+   - Increment entry_count
+   - Update timestamp
+6. Success feedback → Back to list
+
+RETRIEVING PASSWORD:
+1. User sees list: "Facebook - hung@gmail.com"
+2. Click "View" → Modal shows:
+🔒 Enter master password  │
+   │ [________]  [Unlock]
+3. After unlock:
+   - Fetch blob_id from Vault
+   - Download from Walrus
+   - Decrypt với Seal
+   - Show password: ••••••••
+   - [Show] [Copy] buttons
+4. Click copy → "Copied!" notification
+
+CROSS-DEVICE SYNC :
+1. User logs in on different device (laptop → phone)
+2. zkLogin với same Google account
+3. Same Sui address derived
+4. Query Vault object by owner address
+5. Download latest blob_id from Walrus
+6. Decrypt với same Seal policy
+7. All passwords available instantly
+
+Về SuiNS:
+
+UX tuyệt vời cho demo - "Your passwords at hung.sui" đẹp hơn "0x742d...3f4a"
+Identity layer - Có thể share vault với người khác dễ dàng:
+"Share this password with alice.sui"
+   vs
+   "Share with 0x8a3f...9d2e" (=> bad)
+=> NÊN DÙNG, NHƯNG OPTIONAL
+
+Basic architecture:
+
+SHARED CORE LOGIC                      
+│  (TypeScript package - reusable across platforms)       │
+│  - Seal encryption/decryption                           │
+│  - Walrus API calls                                     │
+│  - Sui transaction builders                             │
+│  - Password generator                                   
+
+=> use for web app, extension, responsive mobile (if we have time to do)
+=> but priority web app and extension version.
+
+Plan for UI version:
+
+** Web App** 
+- Smart contracts + Seal + Walrus integration
+- Basic dashboard UI
+- CRUD operations
+- Make it fully responsive (mobile-friendly CSS)
+
+**Extension scaffold** (3 hours)
+- Create Manifest V3 structure
+- Import shared logic package
+- Build minimal popup (list + quick add)
+- Test trong Chrome
+
+Realistic idea:
+
+User flow:
+
+User vào facebook.com/login or another website
+Right-click vào password field
+Thấy menu: "Fill from SuiPass → Facebook"
+Click → password tự động fill từ extension
+
