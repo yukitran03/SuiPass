@@ -1,8 +1,8 @@
-# 🔐 SuiPass - Decentralized Password Manager
+# SuiPass - Decentralized Password Manager
 
 <div align="center">
 
-![SuiPass Logo](./assets/logo.svg)
+![SuiPass Logo](./assets/logo.png)
 
 **Your Passwords, Truly Yours**
 
